@@ -17,14 +17,13 @@ export 'capability.dart';
 export 'mirrors.dart';
 
 class MetaReflectableScope {
-  List<String> scopes;
+  final List<String> scopes;
   const MetaReflectableScope(this.scopes);
 }
 
 class MetaReflectable extends Reflectable {
-  const MetaReflectable() : super.fromList([
-    const TopLevelInvokeMetaCapability(MetaReflectableScope),
-    const InstanceInvokeCapability("reflect")
+  const MetaReflectable() : super.fromList(const [
+    const StaticInvokeMetaCapability(MetaReflectableScope),metadataCapability
   ]);
 }
 
@@ -35,8 +34,9 @@ List<ReflectableInterface> findReflectorsForScope(String scope) {
     return cm.staticMembers.values.fold(res,(List res,MethodMirror mm) {
       if (mm.metadata.any((x) => (x is MetaReflectableScope)&&((x as MetaReflectableScope).scopes.contains(scope)))) {
         res.add(cm.invokeGetter(mm.simpleName));
-        return res;
+
       }
+      return res;
     });
   });
 }
