@@ -16,6 +16,37 @@ import 'src/reflectable_mirror_based.dart' as implementation;
 export 'capability.dart';
 export 'mirrors.dart';
 
+class MetaReflectableScope {
+  List<String> scopes;
+  const MetaReflectableScope(this.scopes);
+}
+
+class MetaReflectable extends Reflectable {
+  const MetaReflectable() : super.fromList([
+    const TopLevelInvokeMetaCapability(MetaReflectableScope),
+    const InstanceInvokeCapability("reflect")
+  ]);
+}
+
+const metaReflectable = const MetaReflectable();
+
+List<ReflectableInterface> findReflectorsForScope(String scope) {
+  return metaReflectable.annotatedClasses.fold([],(List res,ClassMirror cm) {
+    return cm.staticMembers.values.fold(res,(List res,MethodMirror mm) {
+      if (mm.metadata.any((x) => (x is MetaReflectableScope)&&((x as MetaReflectableScope).scopes.contains(scope)))) {
+        res.add(cm.invokeGetter(mm.simpleName));
+        return res;
+      }
+    });
+  });
+}
+
+@metaReflectable
+class MetaReflectorBoot {
+  @MetaReflectableScope("meta")
+  static get reflector => metaReflectable;
+}
+
 abstract class ReflectableInterface {
   /// Returns true if this reflector has capabilities for the given instance.
   bool canReflect(Object o);
