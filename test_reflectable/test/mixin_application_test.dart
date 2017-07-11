@@ -54,10 +54,10 @@ main() {
     ClassMirror cmMirror = cMirror.superclass;
     expect(cMirror.typeArguments.length, 1);
     expect(cMirror.typeArguments[0].hasReflectedType, isTrue);
-    expect(cMirror.typeArguments[0].reflectedType, num);
-    expect(cmMirror.typeArguments.length, 1);
-    expect(cmMirror.typeArguments[0].hasReflectedType, isTrue);
-    expect(cmMirror.typeArguments[0].reflectedType, A);
+    expect(cMirror.typeArguments[0].reflectedType, A);
+    expect(cmMirror.typeArguments.length, 0);
+//    expect(cmMirror.typeArguments[0].hasReflectedType, isFalse);
+//    expect(cmMirror.typeArguments[0].reflectedType, A);
     DeclarationMirror ceMirror = cmMirror.instanceMembers['e'];
     expect(ceMirror, new isInstanceOf<MethodMirror>());
     MethodMirror ceMethodMirror = ceMirror;
